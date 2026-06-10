@@ -1,19 +1,19 @@
-[//]: # (TODO Replace {project name} placeholder as appropriate; then, delete this line.)
-# {project name}
+[//]: # (DONE Replace {project name} placeholder as appropriate; then, delete this line.)
+# Codebreaker
 
 ## Repository
 
 This repository holds Java and Kotlin code written in full or partial completion of an assignment or in-class exercise of the [Deep Dive](https://deepdivecoding.com/) Java and Kotlin training programs.
 
-## Project summary
+## This project implements a multi-UI version of the Bulls & Cows code-breaking game. 
 
-[//]: # (TODO Replace {project summary} placeholder as appropriate; then, delete this line.)
+[//]: # (DONE Replace {project summary} placeholder as appropriate; then, delete this line.)
 {project summary}
 
 ## Credits, copyrights, and license information
 
-[//]: # (TODO Replace {learners} placeholder as appropriate; then, delete this line.)
-Java and Kotlin source code written by Nicholas Bennett and {learners}.
+[//]: # (DONE Replace {learners} placeholder as appropriate; then, delete this line.)
+Java and Kotlin source code written by Nicholas Bennett, Christ Hughes, and Jazzmine Scott.
 
 Build scripts, workflow definitions, and instructional content written by Nicholas Bennett.
 
