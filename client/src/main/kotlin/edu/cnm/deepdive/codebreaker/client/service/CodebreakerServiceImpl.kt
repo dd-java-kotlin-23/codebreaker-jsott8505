@@ -1,12 +1,24 @@
 package edu.cnm.deepdive.codebreaker.client.service
 
-import edu.cnm.deepdive.codebreaker.dto.GameRequest
-import edu.cnm.deepdive.codebreaker.dto.GameResponse
-import edu.cnm.deepdive.codebreaker.dto.GuessRequest
-import edu.cnm.deepdive.codebreaker.dto.GuessResponse
+import edu.cnm.deepdive.codebreaker.client.dto.GameRequest
+import edu.cnm.deepdive.codebreaker.client.dto.GameResponse
+import edu.cnm.deepdive.codebreaker.client.dto.GuessRequest
+import edu.cnm.deepdive.codebreaker.client.dto.GuessResponse
+import edu.cnm.deepdive.codebreaker.client.web.CodebreakerApi
+import jdk.xml.internal.SecuritySupport.getResourceAsStream
+import okhttp3.OkHttpClient
+import java.util.Properties
 import java.util.concurrent.CompletableFuture
 
 class CodebreakerServiceImpl : CodebreakerService {
+   private val client: OkHttpClient
+   private val api: CodebreakerApi
+
+   init{
+       TODO("Not yet implemented; implement to initialize client and api")
+       val properties = loadProperties()
+   }
+
     override fun startGame(game: GameRequest): CompletableFuture<GameResponse> {
         TODO("Not yet implemented")
     }
@@ -32,4 +44,20 @@ class CodebreakerServiceImpl : CodebreakerService {
     ): CompletableFuture<GuessResponse> {
         TODO("Not yet implemented")
     }
+
+    private fun loadProperties(): Properties {
+        val properties = Properties()
+        return CodebreakerServiceImpl::class.java
+            .classLoader
+            .getResourceAsStream(PROPERTIES_FILE)
+                .use {
+                    properties.load(it)
+                    properties
+                }
+    }
+
 }
+
+private const val PROPERTIES_FILE = "wed-service.properties"
+private const val LOG_LEVEL_KEY = "loglevel"
+private const val BASE_URL = "baseUrl"
