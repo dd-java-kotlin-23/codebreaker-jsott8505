@@ -1,14 +1,12 @@
 package edu.cnm.deepdive.codebreaker.client.service
 
 import edu.cnm.deepdive.codebreaker.client.dto.GameRequest
-import edu.cnm.deepdive.codebreaker.client.dto.GameResponse
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.util.concurrent.CompletableFuture
 
-class CodebreakerServiceTest {
+class CodebreakerProxyTest {
 
-    private val service: CodebreakerService = CodebreakerService.instance
+    private val service: CodebreakerProxy = CodebreakerProxy.instance
 
 
     @Test

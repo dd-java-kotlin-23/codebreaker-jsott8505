@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-internal object CodebreakerServiceImpl : CodebreakerService {
+internal object CodebreakerProxyImpl : CodebreakerProxy {
     private val client: OkHttpClient
     private val moshi: Moshi
     private val api: CodebreakerApi
@@ -86,7 +86,7 @@ private const val BASE_URL_KEY = "baseUrl"
 
 private fun loadProperties(): Properties {
     val properties = Properties()
-    return CodebreakerServiceImpl::class.java
+    return CodebreakerProxyImpl::class.java
         .classLoader
         .getResourceAsStream(PROPERTIES_FILE)
         .use {
