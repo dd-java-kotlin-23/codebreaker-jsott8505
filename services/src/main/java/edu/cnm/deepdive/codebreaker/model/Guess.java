@@ -1,8 +1,9 @@
 package edu.cnm.deepdive.codebreaker.model;
 
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
-public record Guess(Game game, String text, int exactMatches, int nearMatches, boolean solution,
-                    ZonedDateTime submitted) {
+public record Guess(String text, int exactMatches, int nearMatches, boolean solution,
+                    OffsetDateTime submitted) {
 
 }
