@@ -5,7 +5,6 @@ import edu.cnm.deepdive.codebreaker.service.CodebreakerService;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 public class CodebreakerViewModel {
@@ -52,6 +51,10 @@ public void observeError(Consumer<Throwable>observer) {
         .thenAccept(this::handleGame)
         .exceptionally(this::handleError);
   }
+
+  public void shutdown() {
+    service.shutdown();
+}
 
   @Nullable
   private Void handleError(Throwable throwable) {
