@@ -3,7 +3,6 @@ package edu.cnm.deepdive.codebreaker.model;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 // TODO: 6/15/26 Add guesses parameter after defining the Guess record. 
 public record Game(String id, String pool, int length, List<Guess> guesses,
@@ -16,6 +15,11 @@ public record Game(String id, String pool, int length, List<Guess> guesses,
         .anyMatch((guess) -> guess.solution());
   }
 
+  /**
+   * Returns the secrete code if it has already been guessed, and null otherwise.
+   *
+   * @return
+   */
   public String getCode() {
     return guesses
         .stream()

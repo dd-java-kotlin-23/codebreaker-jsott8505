@@ -37,7 +37,6 @@ internal object CodebreakerProxyImpl : CodebreakerProxy {
     override fun startGame(game: GameRequest): CompletableFuture<GameResponse> =
          scope.future { handleResponse(api.startGame(game)) }
 
-
     override fun getGame(gameId: String): CompletableFuture<GameResponse> =
         scope.future { handleResponse(api.getGame(gameId)) }
 
