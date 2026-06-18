@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.codebreaker.cli
 
 import edu.cnm.deepdive.codebreaker.cli.controller.GameController
+import edu.cnm.deepdive.codebreaker.cli.controller.SessionController
 import edu.cnm.deepdive.codebreaker.cli.view.GameView
 import edu.cnm.deepdive.codebreaker.cli.view.GuessView
 import edu.cnm.deepdive.codebreaker.cli.view.SessionView
@@ -18,7 +19,7 @@ object Main {
         this.javaClass
             .classLoader
             .getResourceAsStream(GAME_PROPERTIES_FILE)
-            .use{
+            .use {
                 val props = Properties()
                 props.load(it)
                 val bundle = ResourceBundle.getBundle(BASE_BUNDLE_NAME)
@@ -27,8 +28,10 @@ object Main {
                 val gameView = GameView(System.out, bundle, guessView)
                 val viewModel = CodebreakerViewModel()
                 val gameController = GameController(System.`in`, gameView, viewModel, props)
-                gameController.play()
-                // TODO: Create a session controller, passing it the game properties.
+                val sessionController =
+                    SessionController(System.`in`, gameController, sessionView, bundle)
+                sessionController.run()
+                viewModel.shutdown();
             }
 
     }
