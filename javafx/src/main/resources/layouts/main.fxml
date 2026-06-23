@@ -6,6 +6,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <VBox
   xmlns="http://javafx.com/javafx"
   xmlns:fx="http://javafx.com/fxml"
@@ -13,9 +15,27 @@
   fx:controller="edu.cnm.deepdive.codebreaker.javafx.controller.MainController"
   stylesheets="@../styles/main.css">
 
-  <Text
-    id="window-title"
-    text="%windowTitle"/>
+  <AnchorPane
+    id="title-bar">
+
+    <Text
+      id="window-title"
+      text="%windowTitle"
+      AnchorPane.leftAnchor="0"
+      AnchorPane.rightAnchor="0"
+      AnchorPane.topAnchor="0"
+      AnchorPane.bottomAnchor="0"/>
+
+    <Button
+      fx:id="settings"
+      text="%settingsLabel"
+      onAction="#showSettings"
+      styleClass="main-button"
+      AnchorPane.rightAnchor="0"
+      AnchorPane.bottomAnchor="0"
+      AnchorPane.topAnchor="0"/>
+
+  </AnchorPane>
 
   <HBox
     id="guess-controls">
@@ -39,7 +59,8 @@
 
     <ListView
       fx:id="guesses"
-      orientation="VERTICAL"/>
+      orientation="VERTICAL"
+    HBox.hgrow="ALWAYS"/>
 
   </HBox>
 
