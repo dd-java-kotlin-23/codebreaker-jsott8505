@@ -1,15 +1,22 @@
 package edu.cnm.deepdive.codebreaker.javafx.controller;
 
+import edu.cnm.deepdive.codebreaker.javafx.viewmodel.CodebreakerViewModel;
+import edu.cnm.deepdive.codebreaker.model.Game;
 import edu.cnm.deepdive.codebreaker.model.Guess;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Popup;
 
 public class MainController {
 
@@ -17,6 +24,8 @@ public class MainController {
   private static final String POOL_KEY = "pool";
   private static final String LENGTH_KEY = "length";
 
+  @FXML
+  public VBox main;
   @FXML
   private Button settings;
   @FXML
@@ -32,6 +41,7 @@ public class MainController {
 
   private String pool;
   private int length;
+  private CodebreakerViewModel viewModel;
 
   public void shutdown() {
     // viewModel.shutdown();
@@ -39,13 +49,10 @@ public class MainController {
 
   @FXML
   void initialize() throws IOException {
-    try (InputStream input = getClass().getClassLoader().getResourceAsStream(PROPS_FILE)) {
-      Properties properties = new Properties();
-      properties.load(input);
-      pool = properties.getProperty(POOL_KEY);
-      length = Integer.parseInt(properties.getProperty(LENGTH_KEY));
-    }
-    submitGuess.setDisable(true);
+    readGameProperties();
+    setupViewModel();
+    attachListeners();
+
     // TODO Pass a CellFactory to the guesses listview.
     //TODO Register an observer (consumer0 of Game with the viewmodel:
     //     If game is not null:
@@ -56,16 +63,54 @@ public class MainController {
     //     1. Display a message to the user, indicating the error.(probably be a network connection/resolution/timeout error)
   }
 
+  private void attachListeners() {
+    Consumer<Boolean> submissionController = (enabled) -> submitGuess.setDisable(!enabled);
+    guessInput.setTextFormatter(
+        new TextFormatter<>(new GuessInputFilter(pool, length, submissionController)));
+  }
+
+  private void readGameProperties() throws IOException {
+    try (InputStream input = getClass().getClassLoader().getResourceAsStream(PROPS_FILE)) {
+      Properties properties = new Properties();
+      properties.load(input);
+      pool = properties.getProperty(POOL_KEY);
+      length = Integer.parseInt(properties.getProperty(LENGTH_KEY));
+    }
+  }
+
+  private void setupViewModel() {
+    viewModel = new CodebreakerViewModel();
+    viewModel.observeGame((game) -> {
+      // TODO: 6/25/26 Update UI with information from game.
+      Popup popup = new Popup();
+      VBox box = new VBox(10);
+      box.setStyle("-fx-background-color: lightgray; -fx-padding: 20; -fx-border-color: black;");
+      Text text = new Text();
+      String message = game.guesses().isEmpty()
+          ? "Game started successfully: " + game
+          : "Guess submitted successfully: " + game.guesses().getLast();
+      text.setText(message);
+      box.getChildren().add(text);
+      popup.getContent().add(box);
+      popup.setAutoHide(true);
+      popup.show(main, 50, 50);
+    });
+
+    viewModel.observeError((error ) -> {
+          // TODO: 6/25/26 Update UI with information from game.  
+        });
+  }
+
   @FXML
   void startGame(ActionEvent actionEvent) {
     // TODO: 6/23/26 Use the viewmodel to start the game.
-    //viewModel.startGame("ABCDEF", 3);
+    viewModel.startGame("ABCDEF", 3);
   }
 
   @FXML
   void submitGuess(ActionEvent actionEvent) {
     // TODO: 6/23/26 Submit guess for current game.
-    // viewModel.submitGues(...)
+     viewModel.submitGuess(guessInput.getText());
   }
 
   @FXML
