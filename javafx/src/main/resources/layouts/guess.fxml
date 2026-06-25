@@ -13,10 +13,10 @@
   stylesheets="@../styles/main.css"
   id="guess-row">
 
-  <Text
+  <Label
     fx:id="exactMatches"/>
 
-  <Text
+  <Label
     fx:id="nearMatches"/>
 
 </HBox>

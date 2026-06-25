@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.codebreaker.javafx.controller;
 
+import edu.cnm.deepdive.codebreaker.javafx.adapter.GuessAdapter;
 import edu.cnm.deepdive.codebreaker.javafx.viewmodel.CodebreakerViewModel;
 import edu.cnm.deepdive.codebreaker.model.Game;
 import edu.cnm.deepdive.codebreaker.model.Guess;
@@ -18,7 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
-public class MainController {
+public class MainController implements Stoppable {
 
   private static final String PROPS_FILE = "properties/code.properties";
   private static final String POOL_KEY = "pool";
@@ -43,8 +44,9 @@ public class MainController {
   private int length;
   private CodebreakerViewModel viewModel;
 
+  @Override
   public void shutdown() {
-    // viewModel.shutdown();
+    viewModel.shutdown();
   }
 
   @FXML
@@ -52,15 +54,7 @@ public class MainController {
     readGameProperties();
     setupViewModel();
     attachListeners();
-
-    // TODO Pass a CellFactory to the guesses listview.
-    //TODO Register an observer (consumer0 of Game with the viewmodel:
-    //     If game is not null:
-    //     1. Clear out the observableList of guesses that the listview is holding.
-    //     2. Add all of the guesses in the updated game to the listviews observable.
-    //TODO Register an observer of Throwable (error) with the viewmodel:
-    //   If error is not null:
-    //     1. Display a message to the user, indicating the error.(probably be a network connection/resolution/timeout error)
+    updateGuessControls(null);
   }
 
   private void attachListeners() {
@@ -80,25 +74,18 @@ public class MainController {
 
   private void setupViewModel() {
     viewModel = new CodebreakerViewModel();
-    viewModel.observeGame((game) -> {
+    viewModel.observeGame(this::handleGame);
+    viewModel.observeError((error) -> {
       // TODO: 6/25/26 Update UI with information from game.
-      Popup popup = new Popup();
-      VBox box = new VBox(10);
-      box.setStyle("-fx-background-color: lightgray; -fx-padding: 20; -fx-border-color: black;");
-      Text text = new Text();
-      String message = game.guesses().isEmpty()
-          ? "Game started successfully: " + game
-          : "Guess submitted successfully: " + game.guesses().getLast();
-      text.setText(message);
-      box.getChildren().add(text);
-      popup.getContent().add(box);
-      popup.setAutoHide(true);
-      popup.show(main, 50, 50);
     });
+  }
 
-    viewModel.observeError((error ) -> {
-          // TODO: 6/25/26 Update UI with information from game.  
-        });
+  private void handleGame(Game game) {
+    // TODO: 6/25/26 Update UI with information from game.
+    guesses.setCellFactory(new GuessAdapter());
+    guesses.getItems().clear();
+    guesses.getItems().addAll(game.guesses());
+    updateGuessControls(game);
   }
 
   @FXML
@@ -110,11 +97,18 @@ public class MainController {
   @FXML
   void submitGuess(ActionEvent actionEvent) {
     // TODO: 6/23/26 Submit guess for current game.
-     viewModel.submitGuess(guessInput.getText());
+    viewModel.submitGuess(guessInput.getText());
   }
 
   @FXML
   void showSettings(ActionEvent actionEvent) {
     // TODO: 6/23/26 Open settings window.
   }
+
+  private void updateGuessControls(Game game) {
+    boolean enabled = (game != null && !game.isSolved());
+    guessInput.setDisable(!enabled);
+    submitGuess.setDisable(!enabled);
+  }
+
 }
