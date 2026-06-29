@@ -44,6 +44,7 @@ public class MainController implements Stoppable {
 
   private String pool;
   private int length;
+  private boolean inProgress;
 
   @Inject
   public MainController(CodebreakerViewModel viewModel) {
@@ -64,7 +65,7 @@ public class MainController implements Stoppable {
   }
 
   private void attachListeners() {
-    Consumer<Boolean> submissionController = (enabled) -> submitGuess.setDisable(!enabled);
+    Consumer<Boolean> submissionController = (enabled) -> submitGuess.setDisable(!inProgress || !enabled);
     guessInput.setTextFormatter(
         new TextFormatter<>(new GuessInputFilter(pool, length, submissionController)));
   }
@@ -91,6 +92,7 @@ public class MainController implements Stoppable {
     guesses.getItems().clear();
     guesses.getItems().addAll(game.guesses());
     Platform.runLater(() -> guesses.scrollTo(game.guesses().size() - 1));
+    inProgress = !game.isSolved();
     updateGuessControls(game);
   }
 
