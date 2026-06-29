@@ -57,6 +57,12 @@
   <HBox
     id="guess-list">
 
+    <HBox>
+
+      <Text>Here is some text</Text>
+
+    </HBox>
+
     <ListView
       fx:id="guesses"
       orientation="VERTICAL"
