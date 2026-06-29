@@ -1,13 +1,12 @@
-package edu.cnm.deepdive.codebreaker.cli.viewmodel;
+package edu.cnm.deepdive.codebreaker.javafx.viewmodel;
 
 import edu.cnm.deepdive.codebreaker.model.Game;
 import edu.cnm.deepdive.codebreaker.service.CodebreakerService;
 import jakarta.inject.Inject;
-import java.lang.classfile.constantpool.ConstantDynamicEntry;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
-import org.jetbrains.annotations.Nullable;
+import javafx.application.Platform;
 
 public class CodebreakerViewModel {
 
@@ -59,7 +58,6 @@ public void observeError(Consumer<Throwable>observer) {
     service.shutdown();
 }
 
-  @Nullable
   private Void handleError(Throwable throwable) {
     error = throwable;
     notifyErrorObservers();
@@ -72,11 +70,13 @@ public void observeError(Consumer<Throwable>observer) {
   }
 
   private void notifyGameObservers() {
-    gameObservers.forEach((observer) -> observer.accept(game));
+    gameObservers.forEach((observer) -> {
+      Platform.runLater(() ->observer.accept(game));
+    });
   }
 
   private void notifyErrorObservers() {
-    errorObservers.forEach((observer) -> observer.accept(error));
+    errorObservers.forEach((observer) -> Platform.runLater(() ->observer.accept(error)));
   }
 
 }

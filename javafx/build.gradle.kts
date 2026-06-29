@@ -18,24 +18,34 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.openjfx)
     application
     jacoco
     // TODO: Add plugins for fat jar.
 }
 
 val javaVersion = libs.versions.java.get()
+val mainClass: String by project
+val myMainClass = mainClass
 
 kotlin {
     jvmToolchain(javaVersion.toInt())
 }
 
-// TODO: Configure main class of application.
+application {
+    mainClass = myMainClass
+}
+
+javafx {
+    version = libs.versions.openjfx.library.get()
+    modules("javafx.controls", "javafx.fxml")
+}
 
 dependencies {
     implementation(project(":client"))
     implementation(project(":services"))
-    implementation(libs.dagger.core)
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+    implementation(libs.dagger.core)
     annotationProcessor(libs.dagger.compiler)
 
     testImplementation(libs.kotlin.test)
@@ -44,6 +54,9 @@ dependencies {
     testRuntimeOnly(libs.junit.platform)
 }
 
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
 
 tasks.test {
     useJUnitPlatform()

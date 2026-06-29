@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 interface CodebreakerProxy {
 
     /**
-     * Requests the web servivcs to start a game with the configuration specified in [game].
+     * Requests the web services to start a game with the configuration specified in [game].
      *
      * @return [CompletableFuture] which completes successfully is a 2xx response is received from
      * the web services, and exceptionally otherwise.
@@ -30,13 +30,4 @@ interface CodebreakerProxy {
 
     fun shutdown()
 
-    companion object {
-
-        @JvmStatic
-        val instance: CodebreakerProxy
-            get()= CodebreakerProxyImpl
-
-
-
-    }
 }
