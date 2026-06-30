@@ -4,4 +4,9 @@
   <style name="AppTheme" parent="Theme.Material3.DayNight">
 <!--    TODO Add theme customization. -->
   </style>
+
+  <style name="GuessState" parent="TextAppearance.Material3.BodyMedium">
+    <item name="android:textAlignment">center</item>
+  </style>
+
 </resources>
