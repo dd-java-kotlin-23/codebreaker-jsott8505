@@ -18,10 +18,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 import dagger.hilt.android.AndroidEntryPoint;
 import edu.cnm.deepdive.codebreaker.app.R;
+import edu.cnm.deepdive.codebreaker.app.adapter.GuessListAdapter;
 import edu.cnm.deepdive.codebreaker.app.databinding.ActivityMainBinding;
 import edu.cnm.deepdive.codebreaker.app.viewmodel.GameViewModel;
 import edu.cnm.deepdive.codebreaker.model.Game;
-import edu.cnm.deepdive.codebreaker.model.Guess;
 import java.util.regex.Pattern;
 
 @AndroidEntryPoint
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
   private boolean solved;
   private Game game;
   private TextWatcher guessReadyWatcher;
+  private GuessListAdapter adapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void handleGame(Game game) {
+    if (adapter == null || !game.equals(this.game)) {
+      adapter = new GuessListAdapter(this, game.guesses());
+      binding.guessList.setAdapter(adapter);
+    }
     this.game = game;
     updateGameDisplay();
     setupGuessListeners();
@@ -121,8 +126,9 @@ public class MainActivity extends AppCompatActivity {
     // TODO: 6/30/26 Update list views, status indicators, etc.
     binding.pool.setText(getString(R.string.pool_format, game.pool()));
     binding.length.setText(getString(R.string.length_format, game.length()));
-    binding.guessList.setAdapter (new ArrayAdapter<>
-        (this, android.R.layout.simple_list_item_1, game.guesses()));
+    adapter.addAll(game.guesses().subList(adapter.getCount(), game.guesses().size()));
+//    binding.guessList.post(() ->
+//        binding.guessList.smoothScrollToPosition(game.guesses().size() - 1));
   }
 
   private void setupGuessListeners() {
