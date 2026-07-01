@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.codebreaker.app.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -7,7 +8,6 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,10 +53,14 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    boolean handled = false;
     if (item.getItemId() == R.id.new_game) {
       binding.guessInput.setText("");
       viewModel.startGame();
-      return true;
+      handled = true;
+    } else if (item.getItemId() == R.id.settings){
+      Intent intent = new Intent(this, SettingsActivity.class);
+      startActivity(intent);
     }
     return super.onOptionsItemSelected(item);
   }
