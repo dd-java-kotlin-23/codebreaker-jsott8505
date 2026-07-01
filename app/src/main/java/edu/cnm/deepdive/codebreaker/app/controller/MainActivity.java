@@ -7,6 +7,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import edu.cnm.deepdive.codebreaker.app.R;
 import edu.cnm.deepdive.codebreaker.app.databinding.ActivityMainBinding;
 import edu.cnm.deepdive.codebreaker.app.viewmodel.GameViewModel;
 import edu.cnm.deepdive.codebreaker.model.Game;
+import edu.cnm.deepdive.codebreaker.model.Guess;
 import java.util.regex.Pattern;
 
 @AndroidEntryPoint
@@ -119,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
     // TODO: 6/30/26 Update list views, status indicators, etc.
     binding.pool.setText(getString(R.string.pool_format, game.pool()));
     binding.length.setText(getString(R.string.length_format, game.length()));
-    binding.gameState.setText(game.toString());
-    binding.gameState.setSelection(binding.gameState.getText().length());
+    binding.guessList.setAdapter (new ArrayAdapter<>
+        (this, android.R.layout.simple_list_item_1, game.guesses()));
   }
 
   private void setupGuessListeners() {
