@@ -8,6 +8,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,23 +47,35 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-     super.onCreateOptionsMenu(menu);
-     getMenuInflater().inflate(R.menu.game_options, menu);
-     return true;
+    super.onCreateOptionsMenu(menu);
+    getMenuInflater().inflate(R.menu.game_options, menu);
+    return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    boolean handled = false;
+    boolean handled;
     if (item.getItemId() == R.id.new_game) {
-      binding.guessInput.setText("");
-      viewModel.startGame();
+      startGame();
       handled = true;
-    } else if (item.getItemId() == R.id.settings){
-      Intent intent = new Intent(this, SettingsActivity.class);
-      startActivity(intent);
+    } else if (item.getItemId() == R.id.settings) {
+      showSettings();
+      handled = true;
+    } else {
+      handled = super.onOptionsItemSelected(item);
     }
-    return super.onOptionsItemSelected(item);
+    return handled;
+  }
+
+  private void showSettings() {
+    Intent intent = new Intent(this, SettingsActivity.class);
+    startActivity(intent);
+  }
+
+  private void startGame() {
+    disableGameControls();
+    binding.guessInput.setText("");
+    viewModel.startGame();
   }
 
   private void setupLayout() {
@@ -78,21 +91,29 @@ public class MainActivity extends AppCompatActivity {
 
   private void setupViewModel() {
     viewModel = new ViewModelProvider(this).get(GameViewModel.class);
+    viewModel.getGame().observe(this, this::handleGame);
+    viewModel.getSolved().observe(this, this::handleSolved);
     viewModel
-        .getGame()
-        .observe(this, this::handleGame);
-    viewModel
-        .getSolved()
-        .observe(this, this::handleSolved);
-    viewModel
-        .getError()
-        .observe(this, this::handleError);
+        .getShowText()
+            .observe(this, (show)-> {
+               binding.guessListHeader.guessText.setVisibility(show ? View.VISIBLE : View.GONE);
+              // TODO: 7/2/26 Ask adapter to update its display.
+            });
+    viewModel.getError().observe(this, this::handleError);
   }
 
   private void attachButtonListeners() {
-    //noinspection DataFlowIssue
-    binding.submitGuess.setOnClickListener((_) ->
-        viewModel.submitGuess(binding.guessInput.getText().toString()));
+    binding.submitGuess.setOnClickListener((_) -> {
+      disableGameControls();
+      //noinspection DataFlowIssue
+      viewModel.submitGuess(binding.guessInput.getText().toString());
+    });
+  }
+
+  private void disableGameControls() {
+    binding.submitGuess.setEnabled(false);
+    binding.guessInput.setEnabled(false);
+    binding.waitingIndicator.setVisibility(View.VISIBLE);
   }
 
   private void handleGame(Game game) {
@@ -131,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
     binding.pool.setText(getString(R.string.pool_format, game.pool()));
     binding.length.setText(getString(R.string.length_format, game.length()));
     adapter.addAll(game.guesses().subList(adapter.getCount(), game.guesses().size()));
-//    binding.guessList.post(() ->
-//        binding.guessList.smoothScrollToPosition(game.guesses().size() - 1));
+    binding.waitingIndicator.setVisibility(View.GONE);
   }
 
   private void setupGuessListeners() {
