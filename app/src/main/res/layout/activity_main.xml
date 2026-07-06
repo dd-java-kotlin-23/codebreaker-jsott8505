@@ -23,6 +23,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/full_dynamic_spacing"
+    style="@style/GameParams"
     app:layout_constraintBaseline_toBaselineOf="@+id/pool"
     app:layout_constraintEnd_toEndOf="parent"
     tools:text="Length: 3"/>
