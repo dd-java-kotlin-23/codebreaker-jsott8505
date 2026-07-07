@@ -30,10 +30,6 @@ public class IncompleteGamesFragment extends Fragment {
       Bundle savedInstanceState) {
     binding = FragmentIncompleteGamesBinding.inflate(inflater, container, false);
     // TODO: 7/7/26 Attach listeners, etc.
-    binding.showGame.setOnClickListener((_) -> {
-      NavController controller = Navigation.findNavController(binding.getRoot());
-      controller.navigate(IncompleteGamesFragmentDirections.showGameFragment());
-  });
     return binding.getRoot();
   }
 
