@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import edu.cnm.deepdive.codebreaker.app.R;
+import edu.cnm.deepdive.codebreaker.app.repesitory.GameRepository;
 import edu.cnm.deepdive.codebreaker.app.repesitory.PreferencesRepository;
 import edu.cnm.deepdive.codebreaker.model.Game;
 import edu.cnm.deepdive.codebreaker.service.CodebreakerService;
@@ -22,7 +23,8 @@ public class GameViewModel extends ViewModel {
   private static final String TAG = GameViewModel.class.getSimpleName();
 
   private final CodebreakerService service;
-  private final PreferencesRepository repository;
+  private final PreferencesRepository preferencesRepository;
+  private final GameRepository gameRepository;
   private final MutableLiveData<Game> game;
   private final LiveData<Boolean> solved;
   private final MutableLiveData<Throwable> error;
@@ -30,21 +32,22 @@ public class GameViewModel extends ViewModel {
   private final Observer<Integer> poolSizeObserver = this::setPoolSize;
   private final String masterPool;
 
-
   private int codeLength;
   private int poolSize;
   private boolean gameStarted;
 
   @Inject
-   GameViewModel(@ApplicationContext Context context, CodebreakerService service, PreferencesRepository repository) {
+   GameViewModel(@ApplicationContext Context context, CodebreakerService service,
+      PreferencesRepository preferencesRepository, GameRepository gameRepository) {
     this.service = service;
-    this.repository = repository;
+    this.preferencesRepository = preferencesRepository;
+    this.gameRepository = gameRepository;
     game = new MutableLiveData<>();
     solved = Transformations.map(game, Game::isSolved);
     error = new MutableLiveData<>();
     masterPool = context.getString(R.string.master_pool);
-    repository.getCodeLength().observeForever(codeLengthObserver);
-    repository.getPoolSize().observeForever(poolSizeObserver);
+    preferencesRepository.getCodeLength().observeForever(codeLengthObserver);
+    preferencesRepository.getPoolSize().observeForever(poolSizeObserver);
   }
 
   public LiveData<Game> getGame() {
@@ -56,7 +59,7 @@ public class GameViewModel extends ViewModel {
   }
 
   public LiveData<Boolean> getShowText(){
-    return Transformations.distinctUntilChanged(repository.getShowText());
+    return Transformations.distinctUntilChanged(preferencesRepository.getShowText());
   }
   public LiveData<Throwable> getError() {
     return error;
@@ -64,8 +67,8 @@ public class GameViewModel extends ViewModel {
 
   @Override
   protected void onCleared() {
-    repository.getCodeLength().removeObserver(codeLengthObserver);
-    repository.getPoolSize().removeObserver(codeLengthObserver);
+    preferencesRepository.getCodeLength().removeObserver(codeLengthObserver);
+    preferencesRepository.getPoolSize().removeObserver(codeLengthObserver);
     super.onCleared();
   }
 
@@ -73,6 +76,7 @@ public class GameViewModel extends ViewModel {
     error.setValue(null);
     service
         .startGame(masterPool.substring(0, poolSize), codeLength)
+        .thenCompose(gameRepository::save)
         .thenAccept(game::postValue)
         .exceptionally(this::postError);
   }
@@ -81,6 +85,7 @@ public class GameViewModel extends ViewModel {
   error.setValue(null);
   service
       .submitGuess(game.getValue(), text)
+      .thenCompose(gameRepository::save)
       .thenAccept(game::postValue)
       .exceptionally(this::postError);
   }
