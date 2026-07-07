@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.codebreaker.app.model.entity
 
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.DefaultTab.AlbumsTab.value
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -12,13 +13,17 @@ import java.time.OffsetDateTime
         Index(
             value = ["code_length","pool_size", "guess_count", "elapsed_time"],
             orders = [Index.Order.ASC, Index.Order.ASC, Index.Order.ASC, Index.Order.ASC],
-            )
+            ),
+        Index(value = [ "external_key"], unique = true)
     ]
 )
 data class CompleteGame(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "complete_game_id")
     val id: Long = 0,
+
+    @ColumnInfo(name = "external_key")
+    val externalKey:String,
 
     @ColumnInfo(name = "code_length")
     val codeLength: Int = 0,
