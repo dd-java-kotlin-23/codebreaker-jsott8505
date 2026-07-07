@@ -8,11 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.lifecycle.ViewModelProvider;
-import edu.cnm.deepdive.codebreaker.app.R;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import dagger.hilt.android.AndroidEntryPoint;
+import edu.cnm.deepdive.codebreaker.app.adapter.IncompleteGameAdapter;
 import edu.cnm.deepdive.codebreaker.app.databinding.FragmentIncompleteGamesBinding;
 import edu.cnm.deepdive.codebreaker.app.viewmodel.GameViewModel;
+import jakarta.inject.Inject;
 
+@AndroidEntryPoint
 public class IncompleteGamesFragment extends Fragment {
+
+  @Inject
+  IncompleteGameAdapter adapter;
 
   private FragmentIncompleteGamesBinding binding;
   private GameViewModel viewModel;
@@ -22,19 +30,25 @@ public class IncompleteGamesFragment extends Fragment {
       Bundle savedInstanceState) {
     binding = FragmentIncompleteGamesBinding.inflate(inflater, container, false);
     // TODO: 7/7/26 Attach listeners, etc.
+    binding.showGame.setOnClickListener((_) -> {
+      NavController controller = Navigation.findNavController(binding.getRoot());
+      controller.navigate(IncompleteGamesFragmentDirections.showGameFragment());
+  });
     return binding.getRoot();
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    binding.incompleteGames.setAdapter(adapter);
     viewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
-    // TODO: 7/7/26 Observe livedata containing incomplete games.
     viewModel
         .getIncompleteGames()
         .observe(getViewLifecycleOwner(), games -> {
-          // TODO: 7/7/26 Pass games to recyclerview adapter.
-        } );
+          adapter.clear();
+          adapter.addAll(games);
+          adapter.notifyDataSetChanged();
+        });
   }
 
   @Override
