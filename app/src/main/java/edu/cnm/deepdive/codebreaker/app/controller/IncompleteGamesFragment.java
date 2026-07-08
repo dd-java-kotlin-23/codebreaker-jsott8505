@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.codebreaker.app.controller;
 
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -8,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import dagger.hilt.android.AndroidEntryPoint;
 import edu.cnm.deepdive.codebreaker.app.adapter.IncompleteGameAdapter;
 import edu.cnm.deepdive.codebreaker.app.databinding.FragmentIncompleteGamesBinding;
@@ -18,6 +17,8 @@ import jakarta.inject.Inject;
 
 @AndroidEntryPoint
 public class IncompleteGamesFragment extends Fragment {
+
+  private static final String TAG = IncompleteGamesFragment.class.getSimpleName();
 
   @Inject
   IncompleteGameAdapter adapter;
@@ -36,6 +37,7 @@ public class IncompleteGamesFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    adapter.setListener((v, game) -> Log.d(TAG, game.toString()));
     binding.incompleteGames.setAdapter(adapter);
     viewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
     viewModel

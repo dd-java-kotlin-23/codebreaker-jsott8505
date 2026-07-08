@@ -63,6 +63,7 @@ public class GameViewModel extends ViewModel {
   public LiveData<Boolean> getShowText(){
     return Transformations.distinctUntilChanged(preferencesRepository.getShowText());
   }
+
   public LiveData<Throwable> getError() {
     return error;
   }
@@ -90,6 +91,23 @@ public class GameViewModel extends ViewModel {
       .thenCompose(gameRepository::save)
       .thenAccept(game::postValue)
       .exceptionally(this::postError);
+  }
+
+  public void getGame(String gameId) {
+    error.setValue(null);
+    service
+        .getGame(gameId)
+        .thenCompose(gameRepository::save)
+        .thenAccept(game::postValue)
+        .exceptionally(this::postError); // TODO: 7/8/26 Handle non-existent game.
+  }
+
+  public void deleteGame(String gameId) {
+    error.setValue(null);
+    gameRepository
+        .delete(gameId)
+        .thenCompose((_) -> service.deleteGame(gameId))
+        .exceptionally(this::postError); // TODO: 7/8/26 How to indicate non-existent game.
   }
 
   public LiveData<List<IncompleteGame>> getIncompleteGames() {
