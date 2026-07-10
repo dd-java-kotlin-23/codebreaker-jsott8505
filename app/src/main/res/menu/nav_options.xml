@@ -11,4 +11,9 @@
     android:title="@string/incomplete_games_fagment_option_title"
     android:icon="@drawable/outline_format_list_bulleted_24"/>
 
+  <item
+    android:id="@+id/complete_games_fragment"
+    android:title="@string/complete_games_fragment_option_title"
+    android:icon="@drawable/outline_format_list_numbered_24"/>
+
 </menu>
