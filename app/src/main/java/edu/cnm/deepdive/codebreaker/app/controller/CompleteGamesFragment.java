@@ -15,8 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
 import edu.cnm.deepdive.codebreaker.app.adapter.CompleteGameAdapter;
 import edu.cnm.deepdive.codebreaker.app.databinding.FragmentCompleteGamesBinding;
+import edu.cnm.deepdive.codebreaker.app.model.entity.CompleteGame;
 import edu.cnm.deepdive.codebreaker.app.viewmodel.GameViewModel;
 import jakarta.inject.Inject;
+import java.util.List;
 
 @AndroidEntryPoint
 public class CompleteGamesFragment extends Fragment {
@@ -56,11 +58,7 @@ public class CompleteGamesFragment extends Fragment {
     binding.completeGames.setAdapter(adapter);
     viewModel
         .getCompleteGames()
-        .observe(owner, (games) -> {
-          adapter.clear();
-          adapter.addAll(games);
-          adapter.notifyDataSetChanged();
-        });
+        .observe(owner, this::populateGameAdapter);
     viewModel
         .getCodeLength()
         .observe(owner, binding.codeLength::setProgress);
@@ -72,6 +70,12 @@ public class CompleteGamesFragment extends Fragment {
   public void onDestroyView() {
     binding = null;
     super.onDestroyView();
+  }
+
+  private void populateGameAdapter(List<CompleteGame> games) {
+    adapter.clear();
+    adapter.addAll(games);
+    adapter.notifyDataSetChanged();
   }
 
   @FunctionalInterface
